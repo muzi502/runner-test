@@ -1,5 +1,5 @@
 ---
-name: Ubuntu
+name: Package images
 on: push
 jobs:
   sync-images:
@@ -7,12 +7,39 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
-        with:
-          path: tools
 
-      - name: Config git user and user.email
+      - name: Expand disk free space
         run: |
-          sudo docker pull registry:2
-          sudo docker run -d -v $PWD/docker:/var/lib/registry/docker -p 127.0.0.1:80:5000 pull registry:2
-          sudo docker tag pull registry:2 localhost/registry:2
-          sudo docker push localhost/registry:2
+          sudo rm -rf /usr/share/dotnet /opt/hostedtoolcache /usr/local/lib/android
+
+      - name: Run docker registry
+        run: |
+          sudo docker run -d --name registry -v /var/lib/registry:/var/lib/registry -p 127.0.0.1:80:5000 registry:2
+
+      - name: Sync images
+        shell: bash
+        run: |
+          bash sync.sh images.list docker.io localhost
+
+      - name: Build skopeo
+        shell: bash
+          env:
+            SKOPEO_VERSION: "v1.2.0"
+        run: |
+          docker build -t skopeo:${SKOPEO_VERSION} -f build/Dockerfile.skopeo .
+          docker run -d --name skopeo skopeo:${SKOPEO_VERSION} sleep 60s
+          docker cp skopeo:/usr/bin/skopeo .
+
+      - name: Build registry images
+        shell: bash
+        env:
+          IMAGE_NAME: "images"
+          IMAGE_TAG: "latest"
+        run: |
+          sudo docker stop registry
+          sudo mv -f /var/lib/registry/docker .
+          sudo docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f build/Dockerfile .
+          docker images
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v1
