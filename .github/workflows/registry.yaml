@@ -23,8 +23,8 @@ jobs:
 
       - name: Build skopeo
         shell: bash
-          env:
-            SKOPEO_VERSION: "v1.2.0"
+        env:
+          SKOPEO_VERSION: v1.2.0
         run: |
           docker build -t skopeo:${SKOPEO_VERSION} -f build/Dockerfile.skopeo .
           docker run -d --name skopeo skopeo:${SKOPEO_VERSION} sleep 60s
