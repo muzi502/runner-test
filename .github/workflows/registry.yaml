@@ -8,6 +8,16 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v2
 
+      - uses: DamianReeves/write-file-action
+        with:
+          path: ./token
+          contents: ${{ secrets.DOCKER_USERNAME }}
+          write-mode: overwrite
+
+      - name: Push image
+        run: |
+          cat ./token | docker login -u ${{ secrets.DOCKER_USERNAME }} -p --password-stdin
+
       - name: Expand disk free space
         run: |
           sudo rm -rf /usr/share/dotnet /opt/hostedtoolcache /usr/local/lib/android
