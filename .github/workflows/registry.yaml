@@ -10,7 +10,8 @@ jobs:
 
       - name: Push image
         run: |
-         echo '${{ secrets.DOCKER_PASSWORD }}' | docker login -u ${{ secrets.DOCKER_USERNAME }} -p --password-stdin || true
+          echo '${{ secrets.DOCKER_PASSWORD }}' > token
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p $(cat token)
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v1
