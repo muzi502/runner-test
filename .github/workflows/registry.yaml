@@ -12,7 +12,10 @@ jobs:
         env:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
         run: |
-          printenv | sed 's/DOCKER_PASSWORD=//p' | docker login -u ${{ secrets.DOCKER_USERNAME }} -p --password-stdin
+          printenv | sed 's/DOCKER_PASSWORD=//p' | docker login -u ${{ secrets.DOCKER_USERNAME }} -p --password-stdin || true
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v1
 
       - name: Expand disk free space
         run: |
