@@ -17,8 +17,10 @@ jobs:
       - name: Generate Changelog
         run: echo "# Good things have arrived" > $REPO_TAG-CHANGELOG.txt
 
-      - name: "Create release"
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${REPO_TAG}-CHANGELOG.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          hub release create -a $REPO_TAG-CHANGELOG.txt --draft "${REPO_TAG}"
