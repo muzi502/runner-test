@@ -15,13 +15,10 @@ jobs:
           git describe --tags --always | sed 's/^/REPO_TAG=/' >> $GITHUB_ENV
 
       - name: Generate Changelog
-        run: echo "# Good things have arrived" > $GITHUB_ENV-CHANGELOG.txt
+        run: echo "# Good things have arrived" > $REPO_TAG-CHANGELOG.txt
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ${GITHUB_ENV}-CHANGELOG.txt
-            images.list
+      - name: "Create release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          hub release create -a $REPO_TAG-CHANGELOG.txt --draft "${REPO_TAG}"
