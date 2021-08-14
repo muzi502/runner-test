@@ -10,4 +10,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Generate Changelog
-        run: md5sum /etc/fstabs
+        run: echo 'test' | md5sum
