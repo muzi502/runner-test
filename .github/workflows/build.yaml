@@ -6,8 +6,4 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Generate Changelog
-        run: echo 'test' | md5sum
+      - uses: mxschmitt/action-tmate@v3
