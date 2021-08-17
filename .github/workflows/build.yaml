@@ -6,7 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: test
-        shell : bash
-        run: |
-          echo {a,b,c}
+      - name: Search latest semver Image
+        uses: tinact/docker.image-retag@master
+        with:
+          image_name: muzi502/os-packages
+          image_old_tag: latest
+          image_new_tag: v0.1.0-test-1.0
+          registry: ghcr.io
+          registry_username: ${{ github.repository_owner }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}
